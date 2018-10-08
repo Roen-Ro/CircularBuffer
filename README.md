@@ -48,7 +48,7 @@ extern void CircularBufferFree(CircularBuffer *cBuf);
 extern void CircularBufferReset(CircularBuffer *cBuf);
 
 // CircularBuffer push
-extern void circularBufferPush(CircularBuffer *cBuf,void *src, size_t length);
+extern void CircularBufferPush(CircularBuffer *cBuf,void *src, size_t length);
 
 // CircularBuffer pop
 extern size_t CircularBufferPop(CircularBuffer *cBuf, size_t length, void *dataOut);

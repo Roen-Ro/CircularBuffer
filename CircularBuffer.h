@@ -17,62 +17,34 @@
 
 
 typedef struct {
+    
     size_t size; //bytes size
     size_t bytesAvailable; //bytes data available in cirle buffer
     size_t tailOffset; //head offset, the oldest byte position offset
     size_t headOffset; //tail offset, the lastest byte position offset
     void *buffer;
-}CircularBuffer;
+
+} CircularBuffer;
 
 
 
-/*************************************************
- Function: CircularBufferCreate.
- Description: create a circular buffer You must call CircularBufferFree() in balance to free the buffer memory created by CircularBufferCreate().
- Input: size, the size in bytes for the circular buffer.
- Return: the newly created circular buffer.
- *************************************************/
+// Construct CircularBuffer with ‘size' in byte. You must call CircularBufferFree() in balance for destruction.
 extern CircularBuffer CircularBufferCreate(size_t size);
 
-/*************************************************
- Function: CircularBufferFree.
- Description: to free memory for CircularBuffer structure
- *************************************************/
+// Destruct CircularBuffer 
 extern void CircularBufferFree(CircularBuffer *cBuf);
 
-/*************************************************
- Function: CircularBufferReset.
- Description: reset the CircularBuffer
- *************************************************/
+// Reset the CircularBuffer
 extern void CircularBufferReset(CircularBuffer *cBuf);
 
-/*************************************************
- Function: circularBufferPush.
- Description: push data to the tail of a circular buffer
- Input: cBuf,the circular buffer where data to be pushed; src, the data source buffer to be push from; length, the data length for push.
- Output: none.
- Return: none.
- Disscusion: incase of overflow, the earlier written data in buffer will be covered by newly added data.
- *************************************************/
-extern void circularBufferPush(CircularBuffer *cBuf,void *src, size_t length);
 
+// Push data to the tail of a circular buffer from 'src' with 'length' size in byte.
+extern void CircularBufferPush(CircularBuffer *cBuf,void *src, size_t length);
 
-/*************************************************
- Function: CircularBufferPop.
- Description: pop data from a circular buffer.
- Input: cBuf,the circular buffer where data to be popped from; length, the length of data in byte wish to be popped out
- Output: dataOut, the output buffer to hold the popped data.
- Return: the actual data length popped out in bytes, it is less or equal to the input length parameter.
- *************************************************/
+// Pop data from a circular buffer to 'dataOut'  with wished 'length' size in byte,return the actual data size in byte popped out,which is less or equal to the input 'length parameter.
 extern size_t CircularBufferPop(CircularBuffer *cBuf, size_t length, void *dataOut);
 
-/*************************************************
- Function: CircularBufferRead.
- Description: read data from a circular buffer. this function only read
- Input: cBuf,the circular buffer where data to be read from; length, the length of data in byte wish to be read out
- Output: dataOut, the output buffer to hold the read data.
- Return: the actual data length read out in bytes, it is less or equal to the input length parameter.
- *************************************************/
+// Read data from a circular buffer to 'dataOut'  with wished 'length' size in byte,return the actual data size in byte popped out,which is less or equal to the input 'length parameter.
 extern size_t CircularBufferRead(CircularBuffer *cBuf, size_t length, void *dataOut);
 
 

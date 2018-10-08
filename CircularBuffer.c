@@ -34,7 +34,7 @@ void CircularBufferReset(CircularBuffer *cBuf)
     cBuf->bytesAvailable = 0;
 }
 
-void circularBufferPush(CircularBuffer *cBuf,void *src, size_t length)
+void CircularBufferPush(CircularBuffer *cBuf,void *src, size_t length)
 {
     size_t writableLen = length;
     void *pSrc = src;
