@@ -17,88 +17,109 @@ int main(int argc, char * argv[]) {
     char b[128];
     int len = 0,offset = 0, outLen = 0;
     
-    
     //push
     printf("\n=====================================\n");
     len = 3;
-    printf("++push=> %d\n",len);
-    circularBufferPush(&cb, a+offset, len );
+    printf("++push=> %d bytes chars:(%c - %c)\n",len,*(a+offset),*(a+offset+len-1));
+    CircularBufferPush(cb, a+offset, len );
     offset += len;
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
     
     //push
     printf("\n=====================================\n");
     len = 7;
-    printf("++push=> %d\n",len);
-    circularBufferPush(&cb, a+offset, len );
+    printf("++push=> %d bytes chars:(%c - %c)\n",len,*(a+offset),*(a+offset+len-1));
+    CircularBufferPush(cb, a+offset, len );
     offset += len;
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
     
     //pop
     printf("\n=====================================\n");
     len = 3;
     memset(b, '\0', 128);
-    outLen = (int)CircularBufferPop(&cb, len, b);
+    outLen = (int)CircularBufferPop(cb, len, b);
     printf("--pop=> %d expect %d data:%s\n",outLen,len,b);
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
     
     
     //read
     printf("\n=====================================\n");
     len = 2;
     memset(b, '\0', 128);
-    outLen = (int)CircularBufferRead(&cb, len, b);
+    outLen = (int)CircularBufferRead(cb, len, b);
     printf("||Read=> %d expect %d data:%s\n",outLen,len,b);
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
     
     
     //push
     printf("\n=====================================\n");
     len = 10;
-    printf("++push=> %d\n",len);
-    circularBufferPush(&cb, a+offset, len );
+    printf("++push=> %d bytes chars:(%c - %c)\n",len,*(a+offset),*(a+offset+len-1));
+    CircularBufferPush(cb, a+offset, len );
     offset += len;
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
     
     //pop
     printf("\n=====================================\n");
     len = 3;
     memset(b, '\0', 128);
-    outLen = (int)CircularBufferPop(&cb, len, b);
+    outLen = (int)CircularBufferPop(cb, len, b);
     printf("--pop=> %d expect %d data:%s\n",outLen,len,b);
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
     
     //pop
-    printf("\n=====================================\n");
-    len = 10;
+    printf("\n============R-R====================\n");
+    len = 30;
     memset(b, '\0', 128);
-    outLen = (int)CircularBufferPop(&cb, len, b);
+    outLen = (int)CircularBufferPop(cb, len, b);
     printf("--pop=> %d expect %d data:%s\n",outLen,len,b);
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
+    
+  //  printf("\n============RESET====================\n");
+//    CircularBufferReset(cb);
+//    CircularBufferPrint(cb,false);
     
     //push
     printf("\n=====================================\n");
     len = 5;
-    printf("++push=> %d\n",len);
-    circularBufferPush(&cb, a+offset, len );
+    printf("++push=> %d bytes chars:(%c - %c)\n",len,*(a+offset),*(a+offset+len-1));
+    CircularBufferPush(cb, a+offset, len );
     offset += len;
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
+    
+
     
     //pop
     printf("\n=====================================\n");
     len = 2;
     memset(b, '\0', 128);
-    outLen = (int)CircularBufferPop(&cb, len, b);
+    outLen = (int)CircularBufferPop(cb, len, b);
     printf("--pop=> %d expect %d data:%s\n",outLen,len,b);
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
     
     //push
     printf("\n=====================================\n");
-    len = 3;
-    printf("++push=> %d\n",len);
-    circularBufferPush(&cb, a+offset, len );
+    len = 10;
+    printf("++push=> %d bytes chars:(%c - %c)\n",len,*(a+offset),*(a+offset+len-1));
+    CircularBufferPush(cb, a+offset, len );
     offset += len;
-    logCircularBuffer(cb);
+    CircularBufferPrint(cb,false);
     
+    
+    //pop
+    printf("\n=====================================\n");
+    len = 6;
+    memset(b, '\0', 128);
+    outLen = (int)CircularBufferPop(cb, len, b);
+    printf("--pop=> %d expect %d data:%s\n",outLen,len,b);
+    CircularBufferPrint(cb,false);
+    
+    //push
+    printf("\n=====================================\n");
+    len = 4;
+    printf("++push=> %d bytes chars:(%c - %c)\n",len,*(a+offset),*(a+offset+len-1));
+    CircularBufferPush(cb, a+offset, len );
+    offset += len;
+    CircularBufferPrint(cb,false);
 }
 

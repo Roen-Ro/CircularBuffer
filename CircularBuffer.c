@@ -9,32 +9,54 @@
 #include "CircularBuffer.h"
 #include <string.h>
 
+struct s_circularBuffer{
+    
+    size_t size; //capacity bytes size
+    size_t dataSize; //occupied data size
+    size_t tailOffset; //head offset, the oldest byte position offset
+    size_t headOffset; //tail offset, the lastest byte position offset
+    void *buffer;
+
+};
+
 extern CircularBuffer CircularBufferCreate(size_t size)
 {
-    CircularBuffer buffer;
-    buffer.buffer = (void *)malloc(size);
-    buffer.size = size;
-    CircularBufferReset(&buffer);
+    size_t totalSize = sizeof(struct s_circularBuffer) + size;
+    void *p = malloc(totalSize);
+    CircularBuffer buffer = (CircularBuffer)p;
+    buffer->buffer = p + sizeof(struct s_circularBuffer);
+    buffer->size = size;
+    CircularBufferReset(buffer);
     return buffer;
 }
 
-void CircularBufferFree(CircularBuffer *cBuf)
+void CircularBufferFree(CircularBuffer cBuf)
 {
     CircularBufferReset(cBuf);
-    free(cBuf->buffer);
     cBuf->size = 0;
-    cBuf->bytesAvailable = 0;
+    cBuf->dataSize = 0;
     cBuf->buffer = NULL;
+    free(cBuf);
 }
 
-void CircularBufferReset(CircularBuffer *cBuf)
+void CircularBufferReset(CircularBuffer cBuf)
 {
     cBuf->headOffset = -1;
     cBuf->tailOffset = -1;
-    cBuf->bytesAvailable = 0;
+    cBuf->dataSize = 0;
 }
 
-void CircularBufferPush(CircularBuffer *cBuf,void *src, size_t length)
+size_t CircularBufferGetSize(CircularBuffer cBuf)
+{
+    return cBuf->size;
+}
+
+size_t CircularBufferGetDataSize(CircularBuffer cBuf)
+{
+    return cBuf->dataSize;
+}
+
+void CircularBufferPush(CircularBuffer cBuf,void *src, size_t length)
 {
     size_t writableLen = length;
     void *pSrc = src;
@@ -87,26 +109,26 @@ void CircularBufferPush(CircularBuffer *cBuf,void *src, size_t length)
         else
             cBuf->headOffset = 0;
         
-        cBuf->bytesAvailable = cBuf->size;
+        cBuf->dataSize = cBuf->size;
     }
     else
     {
         if(cBuf->tailOffset >= cBuf->headOffset)
-            cBuf->bytesAvailable = cBuf->tailOffset - cBuf->headOffset + 1;
+            cBuf->dataSize = cBuf->tailOffset - cBuf->headOffset + 1;
         else
-            cBuf->bytesAvailable = cBuf->size - (cBuf->headOffset - cBuf->tailOffset - 1);
+            cBuf->dataSize = cBuf->size - (cBuf->headOffset - cBuf->tailOffset - 1);
     }
 }
 
-size_t inter_circularBuffer_read(CircularBuffer *cBuf, size_t length, void *dataOut, bool resetHead)
+size_t inter_circularBuffer_read(CircularBuffer cBuf, size_t length, void *dataOut, bool resetHead)
 {
-    if(cBuf->bytesAvailable == 0 || length == 0)
+    if(cBuf->dataSize == 0 || length == 0)
         return 0;
     
     size_t rdLen = length;
     
-    if(cBuf->bytesAvailable < rdLen)
-        rdLen = cBuf->bytesAvailable;
+    if(cBuf->dataSize < rdLen)
+        rdLen = cBuf->dataSize;
     
     
     if(cBuf->headOffset <= cBuf->tailOffset)
@@ -150,7 +172,7 @@ size_t inter_circularBuffer_read(CircularBuffer *cBuf, size_t length, void *data
             
             if(resetHead)
             {
-                cBuf->headOffset = frg2len - 1;
+                cBuf->headOffset = frg2len;
                 if(cBuf->headOffset > cBuf->tailOffset)
                 {
                     cBuf->headOffset = -1;
@@ -161,56 +183,59 @@ size_t inter_circularBuffer_read(CircularBuffer *cBuf, size_t length, void *data
     }
     
     if(resetHead)
-        cBuf->bytesAvailable -= rdLen;
+        cBuf->dataSize -= rdLen;
     
     return rdLen;
 }
 
 
-size_t CircularBufferPop(CircularBuffer *cBuf, size_t length, void *dataOut)
+size_t CircularBufferPop(CircularBuffer cBuf, size_t length, void *dataOut)
 {
     return inter_circularBuffer_read(cBuf,length,dataOut,true);
 }
 
-size_t CircularBufferRead(CircularBuffer *cBuf, size_t length, void *dataOut)
+size_t CircularBufferRead(CircularBuffer cBuf, size_t length, void *dataOut)
 {
     return inter_circularBuffer_read(cBuf,length,dataOut,false);
 }
 
 
-// for test log
-void logCircularBuffer(CircularBuffer cBuf)
+//print circular buffer's content into str,
+void CircularBufferPrint(CircularBuffer cBuf, bool hex)
 {
-    char *b = cBuf.buffer;
-    char *str = malloc(2*cBuf.size+1);
+    char *b = cBuf->buffer;
+    size_t cSize = CircularBufferGetSize(cBuf);
+    char *str = malloc(2*cSize+1);
     
     char c;
     
-    for(size_t i=0; i<cBuf.size; i++)
+    for(size_t i=0; i<cSize; i++)
     {
-        if(cBuf.bytesAvailable == 0)
+        if(CircularBufferGetDataSize(cBuf) == 0)
         {
             c = '_';
         }
-        else if (cBuf.tailOffset < cBuf.headOffset)
+        else if (cBuf->tailOffset < cBuf->headOffset)
         {
-            if(i>cBuf.tailOffset && i<cBuf.headOffset)
+            if(i>cBuf->tailOffset && i<cBuf->headOffset)
                 c = '_';
             else
               c = b[i];
         }
         else
         {
-            if(i>cBuf.tailOffset || i<cBuf.headOffset)
+            if(i>cBuf->tailOffset || i<cBuf->headOffset)
                 c = '_';
             else
                 c = b[i];
         }
-        
-        sprintf(str+i*2, "%c|",c);
+        if(hex)
+            sprintf(str+i*2, "%02X|",c);
+        else
+            sprintf(str+i*2, "%c|",c);
     }
     
-    printf("CircularBuffer: %s <size %zu available:%zu>\n",str,cBuf.size,cBuf.bytesAvailable);
+    printf("CircularBuffer: %s <size %zu dataSize:%zu>\n",str,CircularBufferGetSize(cBuf),CircularBufferGetDataSize(cBuf));
     
     free(str);
 }

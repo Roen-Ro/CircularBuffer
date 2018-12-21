@@ -36,35 +36,43 @@ Finally, if two elements are now removed then what would be returned is not 3 & 
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Circular_buffer_-_X789ABX.svg/500px-Circular_buffer_-_X789ABX.svg.png)
 
-## Code
+## interfaces
 ``` C
-// CircularBuffer create
+typedef struct s_circularBuffer* CircularBuffer;
+
+// Construct CircularBuffer with ‘size' in byte. You must call CircularBufferFree() in balance for destruction.
 extern CircularBuffer CircularBufferCreate(size_t size);
 
-// CircularBuffer free
-extern void CircularBufferFree(CircularBuffer *cBuf);
+// Destruct CircularBuffer 
+extern void CircularBufferFree(CircularBuffer cBuf);
 
-// CircularBuffer reset
-extern void CircularBufferReset(CircularBuffer *cBuf);
+// Reset the CircularBuffer
+extern void CircularBufferReset(CircularBuffer cBuf);
 
-// CircularBuffer push
-extern void CircularBufferPush(CircularBuffer *cBuf,void *src, size_t length);
+//get the capacity of CircularBuffer 
+extern size_t CircularBufferGetSize(CircularBuffer cBuf);
 
-// CircularBuffer pop
-extern size_t CircularBufferPop(CircularBuffer *cBuf, size_t length, void *dataOut);
+//get occupied data size of CircularBuffer
+extern size_t CircularBufferGetDataSize(CircularBuffer cBuf);
 
-// CircularBuffer read
-extern size_t CircularBufferRead(CircularBuffer *cBuf, size_t length, void *dataOut);
+// Push data to the tail of a circular buffer from 'src' with 'length' size in byte.
+extern void CircularBufferPush(CircularBuffer cBuf,void *src, size_t length);
 
-// Print CircularBuffer data in console for debug purpose 
-extern void logCircularBuffer(CircularBuffer cBuf);
+// Pop data from a circular buffer to 'dataOut'  with wished 'length' size in byte,return the actual data size in byte popped out,which is less or equal to the input 'length parameter.
+extern size_t CircularBufferPop(CircularBuffer cBuf, size_t length, void *dataOut);
+
+// Read data from a circular buffer to 'dataOut'  with wished 'length' size in byte,return the actual data size in byte popped out,which is less or equal to the input 'length parameter.
+extern size_t CircularBufferRead(CircularBuffer cBuf, size_t length, void *dataOut);
+
+//for test purpose, print the circular buffer's data content by printf(...); the 'hex' parameters indicates that if the data should be printed in asscii string or hex data format.
+extern void CircularBufferPrint(CircularBuffer cBuf, bool hex);
 
 ```
 
 
 ## Author
 
-Roen(罗亮富), babyluyi@163.com
+Roen(罗亮富), zxllf23@163.com
 
 ## Licenses
 
