@@ -36,7 +36,7 @@ Finally, if two elements are now removed then what would be returned is not 3 & 
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Circular_buffer_-_X789ABX.svg/500px-Circular_buffer_-_X789ABX.svg.png)
 
-## interfaces
+## Interfaces
 ``` C
 typedef struct s_circularBuffer* CircularBuffer;
 

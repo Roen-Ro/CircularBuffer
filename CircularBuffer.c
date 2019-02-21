@@ -63,6 +63,9 @@ size_t CircularBufferGetDataSize(CircularBuffer cBuf)
 
 void CircularBufferPush(CircularBuffer cBuf,void *src, size_t length)
 {
+    if(length == 0)
+        return;
+
     size_t writableLen = length;
     void *pSrc = src;
     
