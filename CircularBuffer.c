@@ -46,6 +46,11 @@ void CircularBufferReset(CircularBuffer cBuf)
     cBuf->dataSize = 0;
 }
 
+size_t CircularBufferGetCapacity(CircularBuffer cBuf) {
+    
+    return cBuf->size;
+}
+
 size_t CircularBufferGetSize(CircularBuffer cBuf)
 {
     return cBuf->size;
