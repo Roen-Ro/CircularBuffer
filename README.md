@@ -49,8 +49,8 @@ extern void CircularBufferFree(CircularBuffer cBuf);
 // Reset the CircularBuffer
 extern void CircularBufferReset(CircularBuffer cBuf);
 
-//get the capacity of CircularBuffer 
-extern size_t CircularBufferGetSize(CircularBuffer cBuf);
+// get the buffer capacity
+extern size_t CircularBufferGetCapacity(CircularBuffer cBuf);
 
 //get occupied data size of CircularBuffer
 extern size_t CircularBufferGetDataSize(CircularBuffer cBuf);
